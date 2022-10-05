@@ -78,8 +78,9 @@ class Chessboard {
     }
 
     containsObj = (obj, arr) => {
-        for (let i = arr.length; i> 0; i--){
-            if (arr[i] == obj){
+        for (let i = 0; arr.length > i; i++){
+            // console.log(arr[i])
+            if (arr[i][0] == obj[0] && arr[i][1] == obj[1]){
                 return true
             }
             
@@ -88,62 +89,63 @@ class Chessboard {
     }
    
 
-    knightMoves = ([startX, startY], [endX, endY], level=0, visited =[], queue=[], found = false) => {
+    knightMoves = ([startX, startY], [endX, endY], numOfMoves=0, visited =[], queue =[[startX, startY]]) => {
         
         
-        if (found == true) {
-            // console.log('moves taken:', level)
-            return
-        }
-        queue.shift()
-        level += 1
         
-        if (this.containsObj(([startX, startY]), visited) == true) {
-
-            return
-        } else {
-            visited.push([startX, startY])
-        }
-        this.root = this.calculateMoves([startX, startY])
-        console.log(this.root.moves[0])
-        this.root.moves.forEach(element => {
-            if (element[0] == endX && element[1] == endY){
+        while ((queue[0][0] == endX && queue[0][1] == endY) == false){
+            
+            this.root = this.calculateMoves([queue[0][0], queue[0][1]])
+            
+            visited.push([queue[0][0], queue[0][1]])
+            queue.shift()
+            
+            
+            
+            
+            this.root.moves.forEach(element => {
+                if (this.containsObj(element, visited) == false && this.containsObj(element, queue) == false) {
+                    queue.push(element)
+                    console.log(queue)
+                    
+                    
+                    
+                }
                 
-                found = true
-                return
-            }
-            if (this.containsObj([element[0], element[1]], visited) == false && this.containsObj([element[0], element[1]], queue) == false ){
-                queue.push([element[0], element[1]])
                 
-            }
-        });
-        
-        console.log('q',queue)
-        console.log('v', visited)
+            });
+            numOfMoves += 1
+            console.log('q', queue)
 
-        console.log(queue[0][0], queue[0][1])
-        while (queue.length > 1) {
-            this.knightMoves([queue[0][0], queue[0][1]], [endX, endY], level, visited, queue, found)
+            console.log(queue)
+            
+            
+
+            
+            
+            
+            
+            
+
+
         }
-    
         
-
-        
-
-
-
-    
-        
-
-        
-        
-        
-    
+        console.log(numOfMoves)
     }
-    
+
+       
+
+        
+        
+        
+        
+
 
 }
 
 let newBoard = new Chessboard
-
+// let randomarr = [[3,3], [3,6], [5,4]]
 newBoard.knightMoves([3,3], [4,3])
+// console.log(newBoard.containsObj([3,6], randomarr))
+
+
