@@ -1,20 +1,19 @@
 class Knight {
     constructor([x, y]){
         this.position = [x, y]
-        this.moves = null
-    }
-
+        this.setPrev = (prev) => {
+            this.prev = this.prev || prev
+        }
+        this.getPrev = () => this.prev
+        
     
-}
-
-class Chessboard {
-    constructor(){
-        this.root = null
         
     }
 
-    calculateMoves = ([x, y]) => {
-        let knight = new Knight([x,y])
+
+
+    calculateMoves = ([x,y]) => {
+        
         let moves = []
         let newX = x - 1
         let newY = y + 2
@@ -27,116 +26,97 @@ class Chessboard {
         }
 
         if (checkBoardRange(newX, newY) == true){
-            moves.push([newX, newY])
+            moves.push(new Knight ([newX, newY]))
         }
 
         newX = x - 2
         newY = y + 1
         if (checkBoardRange(newX, newY) == true){
-            moves.push([newX, newY])
+            moves.push(new Knight ([newX, newY]))
         }
 
         newX = x - 2
         newY = y - 1
         if (checkBoardRange(newX, newY) == true){
-            moves.push([newX, newY])
+            moves.push(new Knight([newX, newY]))
         }
 
         newX = x - 1
         newY = y - 2
         if (checkBoardRange(newX, newY) == true){
-            moves.push([newX, newY])
+            moves.push(new Knight([newX, newY]))
         }
 
         newX = x + 1
         newY = y - 2
         if (checkBoardRange(newX, newY) == true){
-            moves.push([newX, newY])
+            moves.push(new Knight([newX, newY]))
         }
 
         newX = x + 2
         newY = y - 1
         if (checkBoardRange(newX, newY) == true){
-            moves.push([newX, newY])
+            moves.push(new Knight([newX, newY]))
         }
 
 
         newX = x + 2
         newY = y + 1
         if (checkBoardRange(newX, newY) == true){
-            moves.push([newX, newY])
+            moves.push(new Knight([newX, newY]))
         }
 
 
         newX = x + 1
         newY = y + 2
         if (checkBoardRange(newX, newY) == true){
-            moves.push([newX, newY])
+            moves.push(new Knight([newX, newY]))
         }
-        knight.moves = moves
-        return knight
+        return moves
+    }
+    
+}
+
+class Chessboard {
+    constructor(){
+        this.root = null
+        
+        
     }
 
+
     containsObj = (obj, arr) => {
+        
         for (let i = 0; arr.length > i; i++){
             // console.log(arr[i])
             if (arr[i][0] == obj[0] && arr[i][1] == obj[1]){
                 return true
             }
             
-        }
+        }     
+        
         return false
     }
    
-
-    knightMoves = ([startX, startY], [endX, endY], numOfMoves=0, visited =[], queue =[[startX, startY]]) => {
+    knightMoves = ([startX, startY], [endX, endY], queue =[], board =[]) => {
+        this.root = new Knight([startX, startY])
+        queue.push([this.root])
+        console.log(queue[0])
         
+        while (!this.containsObj([endX, endY], queue)){
+            return
+        };
+            
         
+        console.log(this.root.prev)
+
+        console.log('board', board)
+
+
         
-        while ((queue[0][0] == endX && queue[0][1] == endY) == false){
-            
-            this.root = this.calculateMoves([queue[0][0], queue[0][1]])
-            
-            visited.push([queue[0][0], queue[0][1]])
-            queue.shift()
-            
-            
-            
-            
-            this.root.moves.forEach(element => {
-                if (this.containsObj(element, visited) == false && this.containsObj(element, queue) == false) {
-                    queue.push(element)
-                    console.log(queue)
-                    
-                    
-                    
-                }
-                
-                
-            });
-            numOfMoves += 1
-            console.log('q', queue)
-
-            console.log(queue)
-            
-            
-
-            
-            
-            
-            
-            
-
-
-        }
-        
-        console.log(numOfMoves)
     }
 
-       
-
-        
-        
+    
         
         
 
@@ -144,8 +124,25 @@ class Chessboard {
 }
 
 let newBoard = new Chessboard
-// let randomarr = [[3,3], [3,6], [5,4]]
 newBoard.knightMoves([3,3], [4,3])
-// console.log(newBoard.containsObj([3,6], randomarr))
 
 
+
+let testK = new Knight([1, 3])
+
+let testZ = [new Knight([3,4])]
+
+let test0 = new Knight([0,0])
+
+console.log('testz', testZ)
+console.log('getprev', testK.getPrev())
+
+const enqlist = testZ.shift()
+console.log('enq', enqlist)
+
+
+const qlist = enqlist.moves
+
+console.log(qlist)
+
+console.log('test0 moves', test0.calculateMoves(test0.position))
