@@ -1,10 +1,7 @@
 class Knight {
     constructor([x, y]){
         this.position = [x, y]
-        this.setPrev = (prev) => {
-            this.prev = this.prev || prev
-        }
-        this.getPrev = () => this.prev
+        this.last = null
         
     
         
@@ -12,6 +9,20 @@ class Knight {
 
 
 
+    
+    
+}
+
+class Chessboard {
+    constructor(){
+        this.start = null
+        this.target = null
+        this.moves = []
+        this.visited =[]
+        this.lastCord = []
+        
+        
+    }
     calculateMoves = ([x,y]) => {
         
         let moves = []
@@ -74,15 +85,6 @@ class Knight {
         }
         return moves
     }
-    
-}
-
-class Chessboard {
-    constructor(){
-        this.root = null
-        
-        
-    }
 
 
     containsObj = (obj, arr) => {
@@ -98,19 +100,137 @@ class Chessboard {
         return false
     }
    
-    knightMoves = ([startX, startY], [endX, endY], queue =[], board =[]) => {
-        this.root = new Knight([startX, startY])
-        queue.push([this.root])
-        console.log(queue[0])
+    knightMoves = ([startX, startY], [endX, endY], queue =[]) => {
         
-        while (!this.containsObj([endX, endY], queue)){
-            return
-        };
-            
-        
-        console.log(this.root.prev)
+        queue.push(new Knight ([startX, startY]))
+        console.log(queue)
 
-        console.log('board', board)
+      
+
+        while (queue.length !== 0){
+            let curSq = queue.shift()
+            console.log('cursq1', curSq)
+            console.log('q1', queue)
+            
+            // console.log(curSq.position, this.target.position)
+            if (curSq.position[0] == endX && curSq.position[1] == endY){
+                console.log('found')
+                console.log('cur after found', curSq)
+                break
+            }
+
+            
+            console.log('cur after break', curSq)
+            let enq = this.calculateMoves([curSq.position[0], curSq.position[1]])
+            console.log('endq', enq)
+
+            
+            
+            enq.forEach(move => {
+                
+                
+                if (this.containsObj(move.position, this.visited)){
+                 
+                    return
+                }
+                move.last = curSq
+                console.log('last move', move.last)
+                queue.push(move)
+                console.log('queue2', queue)
+                this.visited.push(move.position)
+                console.log('visit arr', this.visited)
+                
+                
+                this.lastCord.push(move)
+                console.log('last cord', this.lastCord)
+                
+               
+            });
+            
+            
+            
+            
+        };
+        
+        console.log('last cord', this.lastCord)
+        const path = []
+        let cur = new Knight([endX, endY])
+
+        while (cur.position[0] != startX && cur.position[1] != startY) {
+            path.unshift(cur.position)
+            cur = this.lastCord[cur.position[0]][cur.position[1]]
+            console.log('cur in while', cur)
+        }
+        path.unshift([startX, startY])
+        console.log(path)
+        // console.log('a', this.lastCord[7])
+        // console.log('b', this.lastCord[7].last)
+        // console.log('b', this.lastCord[7].last.last)
+
+        // while (this.lastCord.length > 0) {
+            
+        //     let cur = this.lastCord.shift()
+        //     console.log('currrrr', cur)
+        //     let path = []
+        //     if (cur.position[0] != startX && cur.position[1] != startY) {
+        //         path.push(cur.position)
+        //         cur = cur.last
+        //         if (cur.last == null){
+        //             return
+        //         }
+                
+        //     } else {
+        //         return path
+        //     }
+        //     console.log(path)
+
+        // }
+
+        // this.lastCord.forEach(element => {
+        //     let cur = element
+        //     console.log(cur, 'cur at beginning')
+        //     if (cur.last == null){
+        //         return
+        //     }
+        //     console.log('curp', cur.position[0])
+        //     while (cur.position[0] != startX && cur.position[1] != startY) {
+        //         console.log(cur.last)
+                
+        //         path.unshift(cur.position)
+        //         if (cur.last == null){
+        //             return
+        //         }
+        //         cur = cur.last
+        //         console.log(cur, 'cur5')
+        //         console.log(cur.position)
+        //     }
+        // });
+
+        
+        
+        // while (cur.position[0] !== startX || cur.position[1] !== startY ) {
+        //     console.log('cur', cur.position[0])
+        //     path.unshift(cur.position)
+        //     this.lastCord.forEach(element => {
+        //         console.log('ele pos', element.position[0], element.position[1])
+        //         if (element.position[0] == endX && element.position[1] == endY){
+        //             console.log('match')
+        //             console.log('ele last', element.last)
+        //             cur = element.last[0]
+        //             console.log('new cur', cur)
+                    
+        //             return
+        //         }
+        //     });
+            
+            
+        // }
+
+        
+        
+        // console.log('path', path)
+            
+      
 
 
         
@@ -126,23 +246,3 @@ class Chessboard {
 let newBoard = new Chessboard
 newBoard.knightMoves([3,3], [4,3])
 
-
-
-let testK = new Knight([1, 3])
-
-let testZ = [new Knight([3,4])]
-
-let test0 = new Knight([0,0])
-
-console.log('testz', testZ)
-console.log('getprev', testK.getPrev())
-
-const enqlist = testZ.shift()
-console.log('enq', enqlist)
-
-
-const qlist = enqlist.moves
-
-console.log(qlist)
-
-console.log('test0 moves', test0.calculateMoves(test0.position))

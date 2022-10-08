@@ -1,75 +1,82 @@
-const squareRegistry = new Map();
-
-const ChessSquare = (x, y) => {
-  const xPos = x;
-  const yPos = y;
-  let predecessor;
-
-  const KNIGHT_OFFSETS = [
-    [1, 2], [1, -2],
-    [2, 1], [2, -1],
-    [-1, 2], [-1, -2],
-    [-2, 1], [-2, -1]
-  ]
-
-  const getPredecessor = () => predecessor;
-  const setPredecessor = (newPred) => {
-    predecessor = predecessor || newPred;
-  }
-
-  const name = () => `${x}, ${y}`
-
-  const createKnightMoves = () => {
-    return KNIGHT_OFFSETS
-             .map((offset) => newSquareFrom(offset[0], offset[1]))
-             .filter((square) => square !== undefined);
-  }
-
-  const newSquareFrom = (xOffset, yOffset) => {
-    const [newX, newY] = [xPos + xOffset, yPos + yOffset];
-    if (0 <= newX && newX < 8 && 0 <= newY && y < 8) {
-      return ChessSquare(newX, newY);
+const Board = (size = 8) => {
+  // 2d array to 
+  let visited = [];
+  for (let i = 0; i < size; i++) {
+    let row = [];
+    for (let j = 0; j < size; j++) {
+      row.push(false);
     }
+    visited.push(row);
   }
 
-  if (squareRegistry.has(name())) {
-    return squareRegistry.get(name());
-  } else {
-    newSquare = { name, getPredecessor, setPredecessor, createKnightMoves }
-    squareRegistry.set(name(), newSquare);
-    return newSquare;
+  let lastCoord = [];
+  for (let i = 0; i < size; i++) {
+    let row = [];
+    for (let j = 0; j < size; j++) {
+      row.push(false);
+    }
+    lastCoord.push(row);
   }
+
+  const isValidCoord = (row, col) => {
+    return row >= 0 && row < size && col >= 0 && col < size;
+  }
+
+  const getPossiblePath = (row, col) => {
+    const directions = [[2, 1], [2, -1], [-2, 1], [-2, -1], [1, 2], [1, -2], [-1, 2], [-1, -2]];
+    return directions.map(coord => [row + coord[0], col + coord[1]])
+      .filter(coord => isValidCoord(coord[0], coord[1]));
+  }
+
+  return { visited, lastCoord, isValidCoord, getPossiblePath };
 }
 
-const knightsTravails = (start, finish) => {
-  squareRegistry.clear();
+const knightTravails = (start, end) => {
+  const board = Board();
+  if (!board.isValidCoord(start[0], start[1]) || !board.isValidCoord(end[0], end[1])) {
+    throw new Error('Invalid start/end coord');
+  }
 
-  const origin = ChessSquare(...start);
-  console.log(origin)
-  const target = ChessSquare(...finish);
+  // find path
+  let queue = [start];
+  while (queue.length !== 0) {
+    const curCoord = queue.shift();
+    if (curCoord[0] === end[0] && curCoord[1] === end[1]) {
+      break;
+    }
 
-  const queue = [origin];
-  while (!queue.includes(target)) {
-    const currentSquare = queue.shift();
-
-    const enqueueList = currentSquare.createKnightMoves();
-    // console.log('q', enqueueList)
-    enqueueList.forEach((square) => {
-        console.log(square.name())
-        square.setPredecessor(currentSquare)
-        console.log(square.getPredecessor().name(), 'pred')
+    const nextCoords = board.getPossiblePath(curCoord[0], curCoord[1]);
+    nextCoords.forEach((coord) => {
+      
+      if (board.visited[coord[0]][coord[1]]) {
+        return;
+      }
+      queue.push(coord);
+      board.visited[coord[0]][coord[1]] = true;
+      console.log(board.visited)
+      
+      board.lastCoord[coord[0]][coord[1]] = [curCoord[0], curCoord[1]];
     });
-    queue.push(...enqueueList);
+    
+  } 
+  const path = [];
+  let curCoord = end;
+  console.log('end', curCoord)
+  //[4,3]
+  while (curCoord[0] !== start[0] || curCoord[1] !== start[1]) {
+    path.unshift(curCoord);
+    console.log('curcord:', curCoord, 'newcurcoard',board.lastCoord[curCoord[0]][curCoord[1]], 'num', `${curCoord[0]}${curCoord[1]}` )
+    curCoord = board.lastCoord[curCoord[0]][curCoord[1]];
+    console.log('cur cord', curCoord)
   }
-  const path = [target]
-  while (!path.includes(origin)) {
-    const prevSquare = path[0].getPredecessor();
-    path.unshift(prevSquare);
-  }
-  console.log(`The shortest path was ${path.length - 1} moves!`);
-  console.log("The moves were:");
-  path.forEach(square => console.log(square.name()));
+  path.unshift(start);
+
+  // output
+  console.log(` => You made it in ${path.length} moves!  Here's your path:`);
+  path.forEach(coord => console.log(coord));
+  return path;
 }
 
 
-knightsTravails([0,0], [1,2])
+
+knightTravails([3,3], [4,3])
