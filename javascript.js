@@ -1,8 +1,6 @@
 class Chessboard {
     constructor(){
-        this.start = null
-        this.target = null
-        this.moves = []
+        
         this.visited =[]
         this.lastCord = []
         
@@ -94,18 +92,6 @@ class Chessboard {
     }
 
 
-    // containsObj = (obj, arr) => {
-        
-    //     for (let i = 0; arr.length > i; i++){
-    //         // console.log(arr[i])
-    //         if (arr[i][0] == obj[0] && arr[i][1] == obj[1]){
-    //             return true
-    //         }
-            
-    //     }     
-        
-    //     return false
-    // }
    
     knightMoves = ([startX, startY], [endX, endY]) => {
         if (startX > 7 || startY > 7 || endX > 7 || endY > 7) {
@@ -178,4 +164,4 @@ newBoard.makeBoard()
 
 // newBoard.knightMoves([3,3], [4,5])
 
-newBoard.knightMoves([0, 0], [7, 7])
+newBoard.knightMoves([0, 0], [4,3])
