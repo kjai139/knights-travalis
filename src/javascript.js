@@ -96,10 +96,10 @@ class Chessboard {
     knightMoves = ([startX, startY], [endX, endY]) => {
         if (startX > 7 || startY > 7 || endX > 7 || endY > 7) {
             console.log('invalid cords')
-            return
+            throw new Error('Invalid Cords')
         } else if (startX < 0 || startY < 0 || endX < 0 || endY < 0) {
             console.log('invalid cords')
-            return
+            throw new Error('Invalid Cords')
         }
         let queue = []
         let start = [startX, startY]
@@ -149,6 +149,7 @@ class Chessboard {
         path.forEach(element => {
             console.log(element)
         });
+        return path.length-1
     }
 
    
@@ -162,6 +163,4 @@ class Chessboard {
 let newBoard = new Chessboard
 newBoard.makeBoard()
 
-// newBoard.knightMoves([3,3], [4,5])
-
-newBoard.knightMoves([0, 0], [4,3])
+export {newBoard}
